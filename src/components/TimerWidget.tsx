@@ -3,7 +3,8 @@
 import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, RotateCcw, Settings } from 'lucide-react'
-import { useTimerStore } from '@/store'
+import { useTimerStore, useLangStore } from '@/store'
+import { t } from '@/lib/i18n'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -28,6 +29,8 @@ export default function TimerWidget() {
     setMode, setIsRunning, tickUp, tickDown, reset,
     setPomodoroPhase, incrementPomodoroCount,
   } = useTimerStore()
+  const { lang } = useLangStore()
+  const tr = t[lang]
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -37,7 +40,6 @@ export default function TimerWidget() {
         if (mode === 'stopwatch') {
           tickUp()
         } else {
-          // countdown & pomodoro
           tickDown()
         }
       }, 1000)
@@ -96,10 +98,10 @@ export default function TimerWidget() {
       {mode === 'pomodoro' && (
         <div className="flex gap-3 text-xs">
           <span className={`px-2 py-0.5 rounded-full transition-all ${pomodoroPhase === 'work' ? 'bg-rose-400/30 text-rose-300' : 'text-white/30'}`}>
-            Work
+            {tr.work}
           </span>
           <span className={`px-2 py-0.5 rounded-full transition-all ${pomodoroPhase === 'break' ? 'bg-emerald-400/30 text-emerald-300' : 'text-white/30'}`}>
-            Break
+            {tr.break}
           </span>
           {pomodoroCount > 0 && (
             <span className="text-amber-300/70">🍅 ×{pomodoroCount}</span>
@@ -136,7 +138,7 @@ export default function TimerWidget() {
             </span>
             {mode === 'pomodoro' && (
               <span className="text-xs text-white/40 mt-1">
-                {pomodoroPhase === 'work' ? 'Focus time ✨' : 'Take a break 🌿'}
+                {pomodoroPhase === 'work' ? tr.focusTime : tr.breakTime}
               </span>
             )}
           </motion.div>
@@ -160,7 +162,7 @@ export default function TimerWidget() {
           }`}
         >
           {isRunning ? <Pause size={16} /> : <Play size={16} />}
-          {isRunning ? 'Pause' : 'Start'}
+          {isRunning ? tr.pause : tr.start}
         </button>
         <button
           className="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all"

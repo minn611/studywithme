@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Check, X, GripVertical } from 'lucide-react'
+import { Plus, Check, X } from 'lucide-react'
+import { useLangStore } from '@/store'
+import { t } from '@/lib/i18n'
 
 interface Todo {
   id: string
@@ -12,6 +14,8 @@ interface Todo {
 }
 
 export default function TodoWidget() {
+  const { lang } = useLangStore()
+  const tr = t[lang]
   const [todos, setTodos] = useState<Todo[]>([])
   const [input, setInput] = useState('')
   const [open, setOpen] = useState(false)
@@ -40,7 +44,7 @@ export default function TodoWidget() {
   return (
     <div className="glass rounded-3xl p-5 w-full max-w-xs">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-semibold text-white/80">📋 To-do</span>
+        <span className="text-sm font-semibold text-white/80">📋 {tr.todo}</span>
         <button
           onClick={() => setOpen((v) => !v)}
           className="p-1 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-all"
@@ -53,7 +57,7 @@ export default function TodoWidget() {
       {todos.length > 0 && (
         <div className="mb-3">
           <div className="flex justify-between text-xs text-white/40 mb-1">
-            <span>{todos.filter((t) => t.done).length}/{todos.length} tasks</span>
+            <span>{todos.filter((t) => t.done).length}/{todos.length} {tr.tasks}</span>
             <span>{donePct}%</span>
           </div>
           <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
@@ -80,14 +84,14 @@ export default function TodoWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addTodo()}
-              placeholder="Add a task..."
+              placeholder={tr.addTask}
               className="flex-1 bg-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:ring-1 focus:ring-white/30"
             />
             <button
               onClick={addTodo}
               className="px-3 py-2 bg-rose-500/70 hover:bg-rose-500 rounded-xl text-white text-sm transition-all"
             >
-              Add
+              {tr.addBtn}
             </button>
           </motion.div>
         )}
@@ -127,7 +131,7 @@ export default function TodoWidget() {
           ))}
         </AnimatePresence>
         {todos.length === 0 && (
-          <p className="text-xs text-white/25 text-center py-2">No tasks yet. Add one! ✨</p>
+          <p className="text-xs text-white/25 text-center py-2">{tr.noTasks}</p>
         )}
       </div>
     </div>

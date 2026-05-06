@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { Mail, Lock, User, LogOut, Loader2, X } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { useLangStore } from '@/store'
+import { t } from '@/lib/i18n'
 
 interface AuthPanelProps {
   user: SupabaseUser | null
@@ -20,6 +22,8 @@ function AuthModal({
   onClose: () => void
   onUserChange: (u: SupabaseUser | null) => void
 }) {
+  const { lang } = useLangStore()
+  const tr = t[lang]
   const [tab, setTab] = useState<'login' | 'signup'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -36,7 +40,7 @@ function AuthModal({
   }, [onClose])
 
   async function handleAuth() {
-    if (!email || !password) { setError('Vui lòng nhập email và mật khẩu'); return }
+    if (!email || !password) { setError(tr.fillFields); return }
     setLoading(true); setError(''); setSuccess('')
     if (tab === 'login') {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -45,7 +49,7 @@ function AuthModal({
     } else {
       const { error } = await supabase.auth.signUp({ email, password })
       if (error) setError(error.message)
-      else setSuccess('Kiểm tra email để xác nhận tài khoản! 🎉')
+      else setSuccess(tr.checkEmail)
     }
     setLoading(false)
   }
@@ -90,10 +94,10 @@ function AuthModal({
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
               <div>
                 <h2 style={{ color: '#fff', fontWeight: 700, fontSize: 18, margin: 0 }}>
-                  {tab === 'login' ? '👋 Chào mừng lại!' : '✨ Tạo tài khoản'}
+                  {tab === 'login' ? tr.welcomeBack : tr.createAccount}
                 </h2>
                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 4, marginBottom: 0 }}>
-                  {tab === 'login' ? 'Đăng nhập để học cùng bạn bè' : 'Miễn phí mãi mãi'}
+                  {tab === 'login' ? tr.loginSubtitle : tr.signupSubtitle}
                 </p>
               </div>
               <button onClick={onClose} style={{
@@ -111,16 +115,16 @@ function AuthModal({
               display: 'flex', background: 'rgba(255,255,255,0.06)',
               borderRadius: 999, padding: 4, marginBottom: 20,
             }}>
-              {(['login', 'signup'] as const).map((t) => (
-                <button key={t} onClick={() => { setTab(t); setError(''); setSuccess('') }}
+              {(['login', 'signup'] as const).map((t_key) => (
+                <button key={t_key} onClick={() => { setTab(t_key); setError(''); setSuccess('') }}
                   style={{
                     flex: 1, padding: '8px 12px', borderRadius: 999, border: 'none', cursor: 'pointer',
                     fontSize: 12, fontWeight: 600, transition: 'all 0.2s',
-                    background: tab === t ? 'rgba(255,255,255,0.18)' : 'transparent',
-                    color: tab === t ? '#fff' : 'rgba(255,255,255,0.4)',
+                    background: tab === t_key ? 'rgba(255,255,255,0.18)' : 'transparent',
+                    color: tab === t_key ? '#fff' : 'rgba(255,255,255,0.4)',
                   }}
                 >
-                  {t === 'login' ? '🔑 Đăng nhập' : '📝 Đăng ký'}
+                  {t_key === 'login' ? tr.loginTab : tr.signupTab}
                 </button>
               ))}
             </div>
@@ -128,7 +132,7 @@ function AuthModal({
             {/* Fields */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div>
-                <label style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, display: 'block', marginBottom: 6 }}>Email</label>
+                <label style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, display: 'block', marginBottom: 6 }}>{tr.emailLabel}</label>
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
@@ -151,7 +155,7 @@ function AuthModal({
               </div>
 
               <div>
-                <label style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, display: 'block', marginBottom: 6 }}>Mật khẩu</label>
+                <label style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, display: 'block', marginBottom: 6 }}>{tr.passwordLabel}</label>
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
@@ -200,13 +204,13 @@ function AuthModal({
                 }}
               >
                 {loading && <Loader2 size={16} className="animate-spin" />}
-                {tab === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'}
+                {tab === 'login' ? tr.loginBtn : tr.signupBtn}
               </button>
 
               <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, textAlign: 'center', margin: 0 }}>
                 {tab === 'login'
-                  ? <><span>Chưa có tài khoản? </span><button onClick={() => setTab('signup')} style={{ color: '#fb7185', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12 }}>Đăng ký ngay</button></>
-                  : <><span>Đã có tài khoản? </span><button onClick={() => setTab('login')} style={{ color: '#fb7185', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12 }}>Đăng nhập</button></>
+                  ? <><span>{tr.noAccount} </span><button onClick={() => setTab('signup')} style={{ color: '#fb7185', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12 }}>{tr.registerNow}</button></>
+                  : <><span>{tr.hasAccount} </span><button onClick={() => setTab('login')} style={{ color: '#fb7185', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12 }}>{tr.loginNow}</button></>
                 }
               </p>
             </div>
@@ -219,6 +223,8 @@ function AuthModal({
 }
 
 export default function AuthPanel({ user, onUserChange }: AuthPanelProps) {
+  const { lang } = useLangStore()
+  const tr = t[lang]
   const [open, setOpen] = useState(false)
 
   async function handleLogout() {
@@ -259,7 +265,7 @@ export default function AuthPanel({ user, onUserChange }: AuthPanelProps) {
         className="flex items-center gap-2 glass rounded-full px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
       >
         <User size={14} />
-        Đăng nhập
+        {tr.signIn}
       </button>
 
       <AuthModal open={open} onClose={() => setOpen(false)} onUserChange={onUserChange} />

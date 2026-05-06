@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { Users, Plus, Link2, LogIn } from 'lucide-react'
+import { useLangStore } from '@/store'
+import { t } from '@/lib/i18n'
 
 interface Room {
   id: string
@@ -22,6 +24,8 @@ interface StudyRoomPanelProps {
 const EMOJIS = ['🔥', '💪', '✅', '⭐', '🎉']
 
 export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
+  const { lang } = useLangStore()
+  const tr = t[lang]
   const [rooms, setRooms] = useState<Room[]>([])
   const [currentRoom, setCurrentRoom] = useState<Room | null>(null)
   const [members, setMembers] = useState<{ user_id: string; username: string }[]>([])
@@ -118,7 +122,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
             <h3 className="text-white font-semibold">🏠 {currentRoom.name}</h3>
             <div className="flex items-center gap-1 text-xs text-white/50 mt-0.5">
               <Users size={10} />
-              <span>{members.length} online</span>
+              <span>{members.length} {tr.online}</span>
               <span className="mx-1">·</span>
               <span className="font-mono tracking-wider">{currentRoom.room_code}</span>
             </div>
@@ -127,7 +131,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
             onClick={() => setCurrentRoom(null)}
             className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full text-white/60 hover:text-white transition-all"
           >
-            Leave
+            {tr.leave}
           </button>
         </div>
 
@@ -142,7 +146,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
             </div>
           ))}
           {members.length === 0 && (
-            <span className="text-xs text-white/30">No one else here yet...</span>
+            <span className="text-xs text-white/30">...</span>
           )}
         </div>
 
@@ -180,7 +184,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
             className="ml-auto flex items-center gap-1 text-xs text-white/50 hover:text-white transition-all"
           >
             <Link2 size={12} />
-            Copy code
+            {tr.copyCode}
           </button>
         </div>
       </div>
@@ -192,7 +196,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Users size={16} className="text-white/60" />
-          <span className="text-sm font-semibold text-white/80">Study Rooms</span>
+          <span className="text-sm font-semibold text-white/80">{tr.studyRooms}</span>
         </div>
         <div className="flex gap-2">
           <button
@@ -200,14 +204,14 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
             className="flex items-center gap-1 text-xs px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-white/70 hover:text-white transition-all"
           >
             <LogIn size={12} />
-            Join
+            {tr.joinRoom}
           </button>
           <button
             onClick={() => { setShowCreate(true); setShowJoin(false) }}
             className="flex items-center gap-1 text-xs px-3 py-1.5 bg-gradient-to-r from-rose-500/80 to-purple-600/80 hover:from-rose-500 hover:to-purple-600 rounded-full text-white transition-all"
           >
             <Plus size={12} />
-            Create
+            {tr.createRoom}
           </button>
         </div>
       </div>
@@ -225,7 +229,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && createRoom()}
-              placeholder="Room name..."
+              placeholder={tr.roomName}
               className="w-full bg-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:ring-1 focus:ring-white/30 mb-2"
             />
             <button
@@ -233,7 +237,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
               disabled={loading}
               className="w-full py-2 bg-gradient-to-r from-rose-500/80 to-purple-600/80 hover:from-rose-500 hover:to-purple-600 rounded-xl text-white text-sm font-medium transition-all disabled:opacity-50"
             >
-              {loading ? 'Creating...' : 'Create Room 🚀'}
+              {loading ? '...' : tr.createBtn}
             </button>
           </motion.div>
         )}
@@ -249,14 +253,14 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && joinByCode()}
-              placeholder="Enter room code..."
+              placeholder={tr.enterCode}
               className="w-full bg-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:ring-1 focus:ring-white/30 mb-2 font-mono tracking-widest uppercase"
             />
             <button
               onClick={joinByCode}
               className="w-full py-2 bg-white/15 hover:bg-white/25 rounded-xl text-white text-sm font-medium transition-all"
             >
-              Join Room 👋
+              {tr.joinBtn}
             </button>
           </motion.div>
         )}
@@ -282,7 +286,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
           </motion.button>
         ))}
         {rooms.length === 0 && (
-          <p className="text-center text-xs text-white/25 py-3">No public rooms yet. Create one! 🏠</p>
+          <p className="text-center text-xs text-white/25 py-3">{tr.noRooms}</p>
         )}
       </div>
     </div>

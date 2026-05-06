@@ -3,10 +3,13 @@
 import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Volume2, VolumeX } from 'lucide-react'
-import { useSoundStore } from '@/store'
+import { useSoundStore, useLangStore } from '@/store'
+import { t } from '@/lib/i18n'
 
 export default function SoundMixer() {
   const { sounds, toggleSound, setVolume } = useSoundStore()
+  const { lang } = useLangStore()
+  const tr = t[lang]
   const audioRefs = useRef<Record<string, HTMLAudioElement>>({})
 
   // Create audio elements on mount
@@ -46,7 +49,7 @@ export default function SoundMixer() {
     <div className="glass rounded-3xl p-5 min-w-[280px]">
       <div className="flex items-center gap-2 mb-4">
         <Volume2 size={16} className="text-white/60" />
-        <span className="text-sm font-semibold text-white/80">Ambient Sounds</span>
+        <span className="text-sm font-semibold text-white/80">{tr.ambientSounds}</span>
       </div>
       <div className="grid grid-cols-3 gap-2 mb-4">
         {sounds.map((snd) => (
@@ -93,7 +96,7 @@ export default function SoundMixer() {
         ))}
       </AnimatePresence>
       {sounds.every((s) => !s.active) && (
-        <p className="text-center text-xs text-white/30 mt-1">Click a sound to activate 🎵</p>
+        <p className="text-center text-xs text-white/30 mt-1">{tr.clickToActivate}</p>
       )}
     </div>
   )
