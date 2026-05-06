@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, RotateCcw, Settings } from 'lucide-react'
+import { Play, Pause, RotateCcw, Settings, X } from 'lucide-react'
 import { useTimerStore, useLangStore } from '@/store'
 import { t } from '@/lib/i18n'
 
@@ -27,10 +27,16 @@ export default function TimerWidget() {
     mode, isRunning, seconds, pomodoroPhase, pomodoroCount,
     pomodoroWorkDuration, pomodoroBreakDuration, countdownTarget,
     setMode, setIsRunning, tickUp, tickDown, reset,
-    setPomodoroPhase, incrementPomodoroCount,
+    setPomodoroPhase, incrementPomodoroCount, setSeconds,
+    setPomodoroWorkDuration, setPomodoroBreakDuration, setCountdownTarget
   } = useTimerStore()
   const { lang } = useLangStore()
   const tr = t[lang]
+
+  const [showSettings, setShowSettings] = useState(false)
+  const [tempWork, setTempWork] = useState(pomodoroWorkDuration / 60)
+  const [tempBreak, setTempBreak] = useState(pomodoroBreakDuration / 60)
+  const [tempCountdown, setTempCountdown] = useState(countdownTarget / 60)
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -51,20 +57,21 @@ export default function TimerWidget() {
 
   // Pomodoro phase switch
   useEffect(() => {
-    if (mode === 'pomodoro' && seconds === 0) {
+    if (mode === 'pomodoro' && seconds <= 0) {
       if (pomodoroPhase === 'work') {
         incrementPomodoroCount()
         setPomodoroPhase('break')
-        useTimerStore.setState({ seconds: pomodoroBreakDuration })
+        setSeconds(pomodoroBreakDuration)
       } else {
         setPomodoroPhase('work')
-        useTimerStore.setState({ seconds: pomodoroWorkDuration })
+        setSeconds(pomodoroWorkDuration)
       }
     }
-    if (mode === 'countdown' && seconds === 0) {
+    if (mode === 'countdown' && seconds <= 0) {
       setIsRunning(false)
+      setSeconds(0)
     }
-  }, [seconds, mode, pomodoroPhase, pomodoroWorkDuration, pomodoroBreakDuration, incrementPomodoroCount, setPomodoroPhase, setIsRunning])
+  }, [seconds, mode, pomodoroPhase, pomodoroWorkDuration, pomodoroBreakDuration, incrementPomodoroCount, setPomodoroPhase, setIsRunning, setSeconds])
 
   const progress =
     mode === 'pomodoro'
@@ -75,8 +82,23 @@ export default function TimerWidget() {
 
   const circumference = 2 * Math.PI * 90
 
+  const handleSaveSettings = () => {
+    setPomodoroWorkDuration(tempWork * 60)
+    setPomodoroBreakDuration(tempBreak * 60)
+    setCountdownTarget(tempCountdown * 60)
+    setShowSettings(false)
+  }
+
+  const togglePhase = () => {
+    if (mode !== 'pomodoro') return
+    const nextPhase = pomodoroPhase === 'work' ? 'break' : 'work'
+    setPomodoroPhase(nextPhase)
+    setSeconds(nextPhase === 'work' ? pomodoroWorkDuration : pomodoroBreakDuration)
+    setIsRunning(false)
+  }
+
   return (
-    <div className="flex flex-col items-center gap-6 p-6 glass rounded-3xl min-w-[300px]">
+    <div className="flex flex-col items-center gap-6 p-6 glass rounded-3xl min-w-[300px] relative overflow-hidden">
       {/* Mode tabs */}
       <div className="flex gap-1 bg-white/5 rounded-full p-1">
         {MODES.map((m) => (
@@ -96,15 +118,21 @@ export default function TimerWidget() {
 
       {/* Pomodoro phase label */}
       {mode === 'pomodoro' && (
-        <div className="flex gap-3 text-xs">
-          <span className={`px-2 py-0.5 rounded-full transition-all ${pomodoroPhase === 'work' ? 'bg-rose-400/30 text-rose-300' : 'text-white/30'}`}>
+        <div className="flex items-center gap-3 text-xs">
+          <button 
+            onClick={togglePhase}
+            className={`px-3 py-1 rounded-full transition-all hover:scale-105 active:scale-95 ${pomodoroPhase === 'work' ? 'bg-rose-400/30 text-rose-300' : 'bg-white/5 text-white/30'}`}
+          >
             {tr.work}
-          </span>
-          <span className={`px-2 py-0.5 rounded-full transition-all ${pomodoroPhase === 'break' ? 'bg-emerald-400/30 text-emerald-300' : 'text-white/30'}`}>
+          </button>
+          <button 
+            onClick={togglePhase}
+            className={`px-3 py-1 rounded-full transition-all hover:scale-105 active:scale-95 ${pomodoroPhase === 'break' ? 'bg-emerald-400/30 text-emerald-300' : 'bg-white/5 text-white/30'}`}
+          >
             {tr.break}
-          </span>
+          </button>
           {pomodoroCount > 0 && (
-            <span className="text-amber-300/70">🍅 ×{pomodoroCount}</span>
+            <span className="text-amber-300/70 ml-1">🍅 ×{pomodoroCount}</span>
           )}
         </div>
       )}
@@ -128,7 +156,7 @@ export default function TimerWidget() {
         </svg>
         <AnimatePresence mode="wait">
           <motion.div
-            key={seconds}
+            key={`${seconds}-${mode}`}
             initial={{ scale: 0.95, opacity: 0.7 }}
             animate={{ scale: 1, opacity: 1 }}
             className="flex flex-col items-center"
@@ -165,11 +193,76 @@ export default function TimerWidget() {
           {isRunning ? tr.pause : tr.start}
         </button>
         <button
+          onClick={() => setShowSettings(true)}
           className="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all"
         >
           <Settings size={18} />
         </button>
       </div>
+
+      {/* Settings Modal Overlay */}
+      <AnimatePresence>
+        {showSettings && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-lg">{tr.timerSettings}</h3>
+              <button onClick={() => setShowSettings(false)} className="text-white/50 hover:text-white">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-white/50 block mb-2">{tr.pomodoroWork}</label>
+                <input 
+                  type="number"
+                  value={tempWork}
+                  onChange={(e) => setTempWork(Number(e.target.value))}
+                  className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-rose-400/50"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-white/50 block mb-2">{tr.pomodoroBreak}</label>
+                <input 
+                  type="number"
+                  value={tempBreak}
+                  onChange={(e) => setTempBreak(Number(e.target.value))}
+                  className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-emerald-400/50"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-white/50 block mb-2">{tr.countdownDuration}</label>
+                <input 
+                  type="number"
+                  value={tempCountdown}
+                  onChange={(e) => setTempCountdown(Number(e.target.value))}
+                  className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-purple-400/50"
+                />
+              </div>
+            </div>
+
+            <div className="mt-auto flex gap-3">
+              <button 
+                onClick={() => setShowSettings(false)}
+                className="flex-1 py-3 rounded-2xl bg-white/5 text-white/70 hover:bg-white/10 text-sm font-medium transition-all"
+              >
+                {tr.cancel}
+              </button>
+              <button 
+                onClick={handleSaveSettings}
+                className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-purple-600 text-white text-sm font-bold shadow-lg shadow-rose-500/20 hover:opacity-90 transition-all"
+              >
+                {tr.save}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
