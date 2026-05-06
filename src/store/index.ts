@@ -66,12 +66,12 @@ interface SoundState {
 }
 export const useSoundStore = create<SoundState>((set) => ({
   sounds: [
-    { id: 'rain',   label: 'Rain',       emoji: '🌧️', src: 'https://cdn.pixabay.com/audio/2022/05/13/audio_1534a3ae04.mp3', volume: 0.5, active: false },
-    { id: 'cafe',   label: 'Café',       emoji: '☕',  src: 'https://cdn.pixabay.com/audio/2022/03/08/audio_c81b82be4e.mp3', volume: 0.5, active: false },
-    { id: 'waves',  label: 'Ocean',      emoji: '🌊',  src: 'https://cdn.pixabay.com/audio/2022/03/09/audio_d4e990e93c.mp3', volume: 0.5, active: false },
-    { id: 'fire',   label: 'Fire',       emoji: '🔥',  src: 'https://cdn.pixabay.com/audio/2022/07/18/audio_2f57bec95c.mp3', volume: 0.5, active: false },
-    { id: 'forest', label: 'Forest',     emoji: '🌿',  src: 'https://cdn.pixabay.com/audio/2022/10/30/audio_ba4f77e84b.mp3', volume: 0.5, active: false },
-    { id: 'white',  label: 'White Noise',emoji: '📻',  src: 'https://cdn.pixabay.com/audio/2021/12/13/audio_c462dd5a55.mp3', volume: 0.5, active: false },
+    { id: 'rain',   label: 'Rain',       emoji: '🌧️', src: 'https://raw.githubusercontent.com/remvze/moodist/main/public/sounds/rain/heavy-rain.mp3', volume: 0.5, active: false },
+    { id: 'cafe',   label: 'Café',       emoji: '☕',  src: 'https://raw.githubusercontent.com/remvze/moodist/main/public/sounds/places/cafe.mp3', volume: 0.5, active: false },
+    { id: 'waves',  label: 'Ocean',      emoji: '🌊',  src: 'https://raw.githubusercontent.com/remvze/moodist/main/public/sounds/nature/waves.mp3', volume: 0.5, active: false },
+    { id: 'fire',   label: 'Fire',       emoji: '🔥',  src: 'https://raw.githubusercontent.com/remvze/moodist/main/public/sounds/nature/campfire.mp3', volume: 0.5, active: false },
+    { id: 'forest', label: 'Forest',     emoji: '🌿',  src: 'https://raw.githubusercontent.com/remvze/moodist/main/public/sounds/nature/jungle.mp3', volume: 0.5, active: false },
+    { id: 'birds',  label: 'Birds',      emoji: '🐦',  src: 'https://raw.githubusercontent.com/remvze/moodist/main/public/sounds/animals/birds.mp3', volume: 0.5, active: false },
   ],
   toggleSound: (id) => set((s) => ({ sounds: s.sounds.map((snd) => snd.id === id ? { ...snd, active: !snd.active } : snd) })),
   setVolume: (id, volume) => set((s) => ({ sounds: s.sounds.map((snd) => snd.id === id ? { ...snd, volume } : snd) })),
