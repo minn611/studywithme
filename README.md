@@ -75,7 +75,7 @@ Chạy script trong file `supabase-schema.sql` vào **SQL Editor** trên Supabas
 ```bash
 npm run dev
 ```
-Truy cập [http://localhost:3000](http://localhost:3000) để trải nghiệm.
+Truy cập [https://studywithme-minn611s-projects.vercel.app/) để trải nghiệm.
 
 ---
 
