@@ -42,16 +42,24 @@ function AuthModal({
   async function handleAuth() {
     if (!email || !password) { setError(tr.fillFields); return }
     setLoading(true); setError(''); setSuccess('')
-    if (tab === 'login') {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) setError(error.message)
-      else { onUserChange(data.user); onClose(); setEmail(''); setPassword('') }
-    } else {
-      const { error } = await supabase.auth.signUp({ email, password })
-      if (error) setError(error.message)
-      else setSuccess(tr.checkEmail)
+    try {
+      if (tab === 'login') {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) setError(error.message)
+        else { onUserChange(data.user); onClose(); setEmail(''); setPassword('') }
+      } else {
+        const { error } = await supabase.auth.signUp({ email, password })
+        if (error) setError(error.message)
+        else setSuccess(tr.checkEmail)
+      }
+    } catch (err: any) {
+      console.error('Auth error:', err)
+      setError(err.message === 'Failed to fetch' 
+        ? 'Lỗi kết nối: Vui lòng kiểm tra cấu hình Supabase (URL/Key) trên Vercel.' 
+        : err.message || 'Đã có lỗi xảy ra')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   if (!mounted) return null
