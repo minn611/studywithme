@@ -45,7 +45,7 @@ export default function StudyRoomPanel({ userId }: StudyRoomPanelProps) {
       .channel(`room:${currentRoom.id}`)
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState()
-        const memberList = Object.values(state).flat() as { user_id: string; username: string }[]
+        const memberList = (Object.values(state).flat() as unknown) as { user_id: string; username: string; }[]
         setMembers(memberList)
       })
       .on('broadcast', { event: 'reaction' }, ({ payload }) => {
