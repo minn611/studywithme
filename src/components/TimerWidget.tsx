@@ -102,9 +102,10 @@ export default function TimerWidget() {
       {/* Mode tabs */}
       <div className="flex gap-1 bg-white/5 rounded-full p-1">
         {MODES.map((m) => (
-          <button
+          <motion.button
             key={m.key}
             onClick={() => setMode(m.key)}
+            whileTap={{ scale: 0.94 }}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
               mode === m.key
                 ? 'bg-white/20 text-white shadow'
@@ -112,25 +113,27 @@ export default function TimerWidget() {
             }`}
           >
             {m.label}
-          </button>
+          </motion.button>
         ))}
       </div>
 
       {/* Pomodoro phase label */}
       {mode === 'pomodoro' && (
         <div className="flex items-center gap-3 text-xs">
-          <button 
+          <motion.button 
             onClick={togglePhase}
-            className={`px-3 py-1 rounded-full transition-all hover:scale-105 active:scale-95 ${pomodoroPhase === 'work' ? 'bg-rose-400/30 text-rose-300' : 'bg-white/5 text-white/30'}`}
+            whileTap={{ scale: 0.92 }}
+            className={`px-3 py-1 rounded-full transition-all ${pomodoroPhase === 'work' ? 'bg-rose-400/30 text-rose-300' : 'bg-white/5 text-white/30'}`}
           >
             {tr.work}
-          </button>
-          <button 
+          </motion.button>
+          <motion.button 
             onClick={togglePhase}
-            className={`px-3 py-1 rounded-full transition-all hover:scale-105 active:scale-95 ${pomodoroPhase === 'break' ? 'bg-emerald-400/30 text-emerald-300' : 'bg-white/5 text-white/30'}`}
+            whileTap={{ scale: 0.92 }}
+            className={`px-3 py-1 rounded-full transition-all ${pomodoroPhase === 'break' ? 'bg-emerald-400/30 text-emerald-300' : 'bg-white/5 text-white/30'}`}
           >
             {tr.break}
-          </button>
+          </motion.button>
           {pomodoroCount > 0 && (
             <span className="text-amber-300/70 ml-1">🍅 ×{pomodoroCount}</span>
           )}
@@ -161,7 +164,8 @@ export default function TimerWidget() {
             animate={{ scale: 1, opacity: 1 }}
             className="flex flex-col items-center"
           >
-            <span className="text-5xl font-mono font-bold text-white tracking-tight">
+            <span className="text-5xl font-bold text-white tracking-tight"
+              style={{ fontFamily: 'var(--font-geist-mono), monospace', fontVariantNumeric: 'tabular-nums' }}>
               {formatTime(seconds)}
             </span>
             {mode === 'pomodoro' && (
@@ -175,14 +179,16 @@ export default function TimerWidget() {
 
       {/* Controls */}
       <div className="flex items-center gap-4">
-        <button
+        <motion.button
           onClick={reset}
+          whileTap={{ scale: 0.88, rotate: -30 }}
           className="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all"
         >
           <RotateCcw size={18} />
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={() => setIsRunning(!isRunning)}
+          whileTap={{ scale: 0.94 }}
           className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 shadow-lg ${
             isRunning
               ? 'bg-white/20 hover:bg-white/30 text-white'
@@ -191,13 +197,14 @@ export default function TimerWidget() {
         >
           {isRunning ? <Pause size={16} /> : <Play size={16} />}
           {isRunning ? tr.pause : tr.start}
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={() => setShowSettings(true)}
+          whileTap={{ scale: 0.88 }}
           className="p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all"
         >
           <Settings size={18} />
-        </button>
+        </motion.button>
       </div>
 
       {/* Settings Modal Overlay */}

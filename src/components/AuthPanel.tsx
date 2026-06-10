@@ -199,10 +199,11 @@ function AuthModal({
                 }}>✅ {success}</div>
               )}
 
-              <button
+              <motion.button
                 id="auth-submit-btn"
                 onClick={handleAuth}
                 disabled={loading}
+                whileTap={!loading ? { scale: 0.96 } : {}}
                 style={{
                   width: '100%', padding: '12px', borderRadius: 12, border: 'none', cursor: 'pointer',
                   background: 'linear-gradient(135deg, #f43f5e, #a855f7)',
@@ -213,7 +214,7 @@ function AuthModal({
               >
                 {loading && <Loader2 size={16} className="animate-spin" />}
                 {tab === 'login' ? tr.loginBtn : tr.signupBtn}
-              </button>
+              </motion.button>
 
               <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, textAlign: 'center', margin: 0 }}>
                 {tab === 'login'
@@ -267,14 +268,15 @@ export default function AuthPanel({ user, onUserChange }: AuthPanelProps) {
 
   return (
     <>
-      <button
+      <motion.button
         id="auth-trigger-btn"
         onClick={() => setOpen(true)}
+        whileTap={{ scale: 0.94 }}
         className="flex items-center gap-2 glass rounded-full px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
       >
         <User size={14} />
         {tr.signIn}
-      </button>
+      </motion.button>
 
       <AuthModal open={open} onClose={() => setOpen(false)} onUserChange={onUserChange} />
     </>

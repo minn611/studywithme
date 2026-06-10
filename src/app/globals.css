@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --font-inter: 'Inter', sans-serif;
+  --font-geist-sans: var(--font-geist-sans), sans-serif;
+  --font-geist-mono: var(--font-geist-mono), monospace;
 }
 
 * {
@@ -9,7 +10,7 @@
 }
 
 body {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
   background: #0f0c29;
   color: #fff;
   overflow-x: hidden;
@@ -25,34 +26,55 @@ body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.3s;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Range input */
 input[type="range"] {
   -webkit-appearance: none;
-  background: rgba(255,255,255,0.1);
+  appearance: none;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 9999px;
-  height: 4px;
+  height: 5px;
+  outline: none;
+  transition: background 0.3s;
+}
+input[type="range"]:hover {
+  background: rgba(255, 255, 255, 0.16);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   width: 14px;
   height: 14px;
   border-radius: 50%;
   background: #f43f5e;
   cursor: pointer;
-  border: 2px solid rgba(255,255,255,0.4);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.4);
+  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #ff4d6d;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.8);
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+  background: #e11d48;
 }
 
 /* Animated gradient background */

@@ -116,13 +116,14 @@ export default function HomePage() {
         </AnimatePresence>
 
         {/* Focus mode toggle */}
-        <button
+        <motion.button
           onClick={() => setFocusMode(!focusMode)}
+          whileTap={{ scale: 0.90 }}
           className={`fixed top-4 right-4 z-50 flex items-center gap-1.5 glass rounded-full px-3 py-1.5 text-xs transition-all hover:bg-white/15 ${focusMode ? 'text-amber-300' : 'text-white/50'}`}
         >
           <Focus size={13} />
           {focusMode ? tr.exitFocus : tr.focus}
-        </button>
+        </motion.button>
 
         {/* Main content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-6 gap-6">
@@ -196,9 +197,10 @@ export default function HomePage() {
                 { id: 'rooms', icon: Users, labelKey: 'rooms' },
                 { id: 'bg', icon: Palette, labelKey: 'theme' },
               ] as const).map((item) => (
-                <button
+                <motion.button
                   key={item.id}
                   onClick={() => togglePanel(item.id)}
+                  whileTap={{ scale: 0.92 }}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 glass hover:bg-white/15 ${
                     activePanel === item.id
                       ? 'bg-white/20 text-white shadow-lg'
@@ -207,7 +209,7 @@ export default function HomePage() {
                 >
                   <item.icon size={15} />
                   {tr[item.labelKey]}
-                </button>
+                </motion.button>
               ))}
             </motion.nav>
           )}

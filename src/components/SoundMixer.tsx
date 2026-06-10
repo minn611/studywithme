@@ -56,7 +56,8 @@ export default function SoundMixer() {
           <motion.button
             key={snd.id}
             onClick={() => toggleSound(snd.id)}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.90 }}
             className={`flex flex-col items-center gap-1 p-2.5 rounded-2xl text-xs transition-all duration-300 border ${
               snd.active
                 ? 'bg-white/20 border-white/30 text-white shadow-lg shadow-white/10'

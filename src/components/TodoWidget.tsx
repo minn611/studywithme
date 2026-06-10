@@ -45,12 +45,13 @@ export default function TodoWidget() {
     <div className="glass rounded-3xl p-5 w-full max-w-xs">
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-semibold text-white/80">📋 {tr.todo}</span>
-        <button
+        <motion.button
           onClick={() => setOpen((v) => !v)}
+          whileTap={{ scale: 0.85, rotate: open ? -90 : 90 }}
           className="p-1 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-all"
         >
           <Plus size={16} />
-        </button>
+        </motion.button>
       </div>
 
       {/* Progress bar */}
@@ -87,12 +88,13 @@ export default function TodoWidget() {
               placeholder={tr.addTask}
               className="flex-1 bg-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:ring-1 focus:ring-white/30"
             />
-            <button
+            <motion.button
               onClick={addTodo}
+              whileTap={{ scale: 0.93 }}
               className="px-3 py-2 bg-rose-500/70 hover:bg-rose-500 rounded-xl text-white text-sm transition-all"
             >
               {tr.addBtn}
-            </button>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -108,8 +110,9 @@ export default function TodoWidget() {
               exit={{ opacity: 0, x: 10 }}
               className="flex items-center gap-2 group"
             >
-              <button
+              <motion.button
                 onClick={() => toggleTodo(todo.id)}
+                whileTap={{ scale: 0.82 }}
                 className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                   todo.done
                     ? 'bg-emerald-400/80 border-emerald-400'
@@ -117,7 +120,7 @@ export default function TodoWidget() {
                 }`}
               >
                 {todo.done && <Check size={10} className="text-white" />}
-              </button>
+              </motion.button>
               <span className={`flex-1 text-sm transition-all ${todo.done ? 'line-through text-white/30' : 'text-white/80'}`}>
                 {todo.text}
               </span>
